@@ -4,10 +4,11 @@ with open('input-4.txt') as f:
 	rawPassportData = ""
 	for row in rows:
 		line = row.strip()
-
-		if line == '' or row == rows[-1]:
+		isLastLine = row == rows[-1]
+		
+		if line == '' or isLastLine:
 			
-			if row == rows[-1]:
+			if isLastLine:
 				rawPassportData += " %s"%line
 
 			rawPassport = rawPassportData.strip().split(' ')
