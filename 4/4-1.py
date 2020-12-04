@@ -5,16 +5,16 @@ with open('input-4.txt') as f:
 	for row in rows:
 		line = row.strip()
 		isLastLine = row == rows[-1]
-		
+
 		if line == '' or isLastLine:
 			
 			if isLastLine:
 				rawPassportData += " %s"%line
 
-			rawPassport = rawPassportData.strip().split(' ')
+			keyValuePairs = rawPassportData.strip().split(' ')
 			passport = {}
 
-			for keyValuePair in rawPassport:
+			for keyValuePair in keyValuePairs:
 				key, value = keyValuePair.split(':')
 				passport[key] = value
 
