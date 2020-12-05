@@ -1,4 +1,4 @@
-from math import floor, ceil
+from math import ceil
 
 with open('input-5.txt') as f:
     boardingPasses = [line.strip() for line in f]
