@@ -35,8 +35,7 @@ def parseInstructions(lines):
       instruction = lines[lineIndex]
       instructionSet = "%s:%s"%(lineIndex, lines[lineIndex])
     except IndexError:
+      return acc, True
       break;
  
-  return acc
-
-print parseInstructions(lines)
+  return acc, False

@@ -1,68 +1,30 @@
-import re
+# I used '-' in the name, can't import then :( Lesson learnt!
+execfile('8-1.py')
 
 with open('input-8.txt') as f:
     lines = [line.strip() for line in f]
 
-runCmds = []
+def checkCorruptedOps(lines):
+  rewriteOps = {
+    'jmp' : lambda : ("jmp", "nop"),
+    'nop' : lambda : ("nop", "jmp")
+    }
 
-def parseLine(line):
-  cmd, num = re.findall(r'(\w+) ([-+]\d+)', line)[0]
-  return [cmd, int(num)]
-
-
-def interpreter(lines): 
   acc = 0
-  lineNo = 0
-  runCmds = set()
-  identifier = "%d:%s"%(lineNo,lines[lineNo])
-  while identifier not in runCmds:
-    runCmds.add(identifier)
-
-    line = lines[lineNo]
-   
-    cmd, num = parseLine(line)
-
-    lineNo += 1
-
-    if cmd == 'acc':
-      acc += num
-
-    if cmd == 'jmp':
-      lineNo += num - 1
-
-    if len(lines) == lineNo:
-      return acc, True      
-    line = lines[lineNo]
+  for lineIndex in range(1, len(lines)):
+    instruction = lines[lineIndex]
+    op, _ = parseInstruction(instruction)
+    if op not in rewriteOps:
+      continue
     
-    identifier = "%d:%s"%(lineNo,lines[lineNo])
+    replaceOp = rewriteOps[op]()
     
-    if identifier in runCmds:
-      return acc, False
-  
-  return acc, True
-
-def fixCorruptedCmd(lines):
-  acc = 0
-  lineNo = 0
-  currentLines = lines[:]
-  for lineNo in range(1, len(currentLines)):
-    cmd, num = parseLine(currentLines[lineNo])
-    if cmd == 'nop':
-      cmd = 'jmp'
-    elif cmd == 'jmp':
-      cmd = 'nop'
-
     adjustedLines = lines[:]
-
-    strNum = str(num)
-    if num >= 0:
-      strNum = "+%s"%num
-
-    adjustedLines[lineNo] = " ".join([cmd, strNum])
-    
-    acc, valid = interpreter(adjustedLines)
-    
-    if valid:
+    adjustedLines[lineIndex] = instruction.replace(replaceOp[0], replaceOp[1])
+ 
+    acc, terminated = parseInstructions(adjustedLines)  
+  
+    if terminated:
       return acc
-
-print fixCorruptedCmd(lines)
+   
+print checkCorruptedOps(lines)
