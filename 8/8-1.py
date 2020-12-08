@@ -3,33 +3,40 @@ import re
 with open('input-8.txt') as f:
     lines = [line.strip() for line in f]
 
-def parseLine(line):
-  cmd, num = re.findall(r'(\w+) ([-+]\d+)', line)[0]
-  return [cmd, int(num)]
+def parseInstruction(instruction):
+  op, val = re.findall(r'(\w+) ([-+]\d+|\d+)', instruction)[0]
+  return [op, int(val)]
 
-runCmds = set()
 
-acc = 0
-lineNo = 0
-identifier = ''
+def executeInstruction(lineIndex, acc, instruction):
+  op, val = parseInstruction(instruction)
+  lineIndex +=1
+  if op == 'nop':
+    pass
+  elif op == 'jmp':
+    lineIndex += val - 1
+  elif op == 'acc':
+    acc += val
 
-while identifier not in runCmds:
+  return lineIndex, acc
+
+def parseInstructions(lines):
+  executedInstructions = set()
+  acc, lineIndex = 0,0
+  instruction = lines[lineIndex]
+  instructionSet = "%s:%s"%(lineIndex, instruction )
   
-  line = lines[lineNo]
-  identifier = "%d:%s"%(lineNo,lines[lineNo])
-  runCmds.add(identifier)
+  while instructionSet not in executedInstructions:
 
-  cmd, num = parseLine(line)
-
-  lineNo += 1
-
-  if cmd == 'acc':
-    acc += num
-
-  if cmd == 'jmp':
-    lineNo += num - 1
+    lineIndex, acc = executeInstruction(lineIndex, acc, instruction)   
+    executedInstructions.add(instructionSet)
     
-  line = lines[lineNo]
-  identifier = "%d:%s"%(lineNo,lines[lineNo])
-  
-print acc
+    try:
+      instruction = lines[lineIndex]
+      instructionSet = "%s:%s"%(lineIndex, lines[lineIndex])
+    except IndexError:
+      break;
+ 
+  return acc
+
+print parseInstructions(lines)
