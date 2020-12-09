@@ -2,14 +2,12 @@ import random
 with open('input-9.txt') as f:
     numbers = [int(line.strip()) for line in f]
 
-preamble = 25
-
 def contains(value, preambleRange):
   for i in range(len(preambleRange)):
     for j in range(i, len(preambleRange)):
       if preambleRange[i] + preambleRange[j] == value:
         return True
-        
+
   return False
 
 def findInvalidNumber(numbers, preamble):
