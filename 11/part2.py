@@ -7,76 +7,77 @@ FREECHAR = 'L'
 OCCUPIEDCHAR = '#'
 ALLCHARS = [FREECHAR,OCCUPIEDCHAR]
 
-def getAdjacents(rows, yPos, xPos, it):
+def getAdjacents(rows, yPos, xPos):
   
   adjacents = []
-  debug = it == 2 and yPos == 1 and xPos == 1
 
-  # if debug:
-  #   print "Debug enabled!!"
-  #   print yPos, xPos
-  # Y axis
-  yIncrement = 1
+  increment = 0
   foundSeats = {
     'high': False,
     'low': False
   }
-  while True:
-    if not foundSeats["high"]:
-      try:
-        char = rows[yPos + yIncrement][xPos]
-        if char in ALLCHARS:
-          foundSeats["high"] = char
-      except:
-        pass
 
-    if yPos - yIncrement > -1 and not foundSeats["low"]:
+  while True:
+    increment += 1
+    pos = [yPos - increment, yPos + increment]
+    if pos[0] >= 0 and not foundSeats["low"]:
       try:
-        char = rows[yPos - yIncrement][xPos]
+        char = rows[pos[0]][xPos]
         if char in ALLCHARS:
           foundSeats["low"] = char
       except:
         pass
-
-    if yPos - yIncrement < 0 and yPos + yIncrement >= len(rows[yPos]):
+    if not foundSeats["high"]:
+      try:
+        char = rows[pos[1]][xPos]
+        if char in ALLCHARS:
+          foundSeats["high"] = char
+      except:
+        pass 
+    if foundSeats["low"] != False and foundSeats["high"] != False:
       break
 
-    yIncrement += 1
+    if pos[0] < 0 and pos[1] > len(rows):
+      break
 
   for key in foundSeats:
     if foundSeats[key]:
       adjacents.append(foundSeats[key])
 
-  # X axis
-  xIncrement = 1
+  increment = 0
   foundSeats = {
     'high': False,
     'low': False
   }
-  while True:
-    if not foundSeats["high"]:
-      try:
-        char = rows[yPos][xPos + xIncrement]
-        if char in ALLCHARS:
-          foundSeats["high"] = char
-      except:
-        pass
 
-    if xPos - xIncrement >= 0 and not foundSeats["low"]:
+  while True:
+    increment += 1
+    pos = [xPos - increment, xPos + increment]
+    if pos[0] >= 0 and not foundSeats["low"]:
       try:
-        char = rows[yPos][xPos - xIncrement]
+        char = rows[yPos][pos[0]]
         if char in ALLCHARS:
           foundSeats["low"] = char
       except:
         pass
-    if xPos - xIncrement < 0 and xPos + xIncrement >= len(rows):
+    if not foundSeats["high"]:
+      try:
+        char = rows[yPos][pos[1]]
+        if char in ALLCHARS:
+          foundSeats["high"] = char
+      except:
+        pass 
+    if foundSeats["low"] != False and foundSeats["high"] != False:
       break
 
-    xIncrement += 1
+    if pos[0] < 0 and pos[1] > len(rows):
+      break
 
   for key in foundSeats:
     if foundSeats[key]:
       adjacents.append(foundSeats[key])
+
+
 
   #Left (High) to Right (Low) on XY Axis
   foundSeats = {
@@ -180,7 +181,7 @@ while True:
       if char == ".":
         continue
 
-      adjacents = getAdjacents(rows, rowIndex, charIndex, it)
+      adjacents = getAdjacents(rows, rowIndex, charIndex)
       free, occupied = countAdjacents(adjacents)
 
       if char == FREECHAR and occupied == 0:
